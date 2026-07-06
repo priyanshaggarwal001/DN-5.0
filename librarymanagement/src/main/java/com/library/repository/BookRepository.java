@@ -2,8 +2,8 @@ package com.library.repository;
 
 public class BookRepository {
 
-    public void display() {
-        System.out.println("Book Repository is working...");
+    public void displayBook() {
+        System.out.println("Book Repository: Book data accessed successfully.");
     }
 
 }
