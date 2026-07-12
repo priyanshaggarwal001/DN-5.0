@@ -1,0 +1,154 @@
+Difference between JPA, Hibernate, and Spring Data JPA
+
+Feature Comparison
+
+  ------------------------------------------------------------------------------------
+  Feature           JPA               Hibernate           Spring Data JPA
+  ----------------- ----------------- ------------------- ----------------------------
+  What is it?       A Java            An ORM framework    A Spring framework that
+                    specification     that implements JPA simplifies JPA usage
+                    (standard) for                        
+                    ORM                                   
+
+  Type              Specification     Implementation      Abstraction over JPA
+                    (Interface/API)                       
+
+  Implementation?   No                Yes                 No (uses Hibernate or
+                                                          another JPA provider)
+
+  Purpose           Defines how Java  Performs actual     Reduces boilerplate code and
+                    objects should be database operations simplifies data access
+                    persisted                             
+
+  Dependency        Needs an          Can work            Requires JPA implementation
+                    implementation    independently or as like Hibernate
+                    (e.g., Hibernate) JPA implementation  
+
+  Transaction       Defines API only  Manual or           Integrated with Spring’s
+  Management                          framework-managed   @Transactional
+
+  Boilerplate Code  Moderate          More                Very little
+  ------------------------------------------------------------------------------------
+
+1. JPA (Java Persistence API)
+
+-   JPA is a specification (standard) defined by Java (JSR 338).
+-   It specifies how Java objects should be mapped to database tables.
+-   It provides only interfaces and annotations.
+-   It does not perform database operations itself.
+
+Example:
+
+@Entity @Table(name = “employee”) public class Employee {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
+
+    private String name;
+
+}
+
+Think of JPA as a rule book.
+
+2. Hibernate
+
+Hibernate is an ORM framework.
+
+It implements JPA and provides the actual functionality.
+
+Responsibilities: - Convert Java objects into database records. -
+Generate SQL queries. - Manage sessions. - Cache objects. - Handle
+transactions.
+
+Example:
+
+Session session = factory.openSession(); Transaction tx =
+session.beginTransaction();
+
+session.save(employee);
+
+tx.commit(); session.close();
+
+Notice that you have to: - Open session - Begin transaction - Save
+object - Commit transaction - Close session
+
+This results in more boilerplate code.
+
+3. Spring Data JPA
+
+Spring Data JPA sits on top of JPA.
+
+It does not implement JPA.
+
+Instead, it uses a JPA provider (usually Hibernate) behind the scenes
+and removes most of the repetitive code.
+
+Repository Example:
+
+public interface EmployeeRepository extends JpaRepository<Employee,
+Integer> { }
+
+Service Example:
+
+@Service public class EmployeeService {
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Transactional
+    public void addEmployee(Employee employee) {
+        employeeRepository.save(employee);
+    }
+
+}
+
+You do not have to: - Open sessions - Close sessions - Write CRUD SQL -
+Write save/update/delete methods
+
+Spring handles these automatically.
+
+Relationship
+
+Application | v Spring Data JPA | v JPA (Specification) | v Hibernate
+(Implementation) | v Database
+
+Why use Spring Data JPA?
+
+Instead of writing:
+
+Session session = … Transaction tx = … session.save(employee);
+tx.commit(); session.close();
+
+You simply write:
+
+employeeRepository.save(employee);
+
+Spring Data JPA internally uses Hibernate to execute the SQL.
+
+Real-world Analogy
+
+-   JPA -> The menu (defines what can be ordered)
+-   Hibernate -> The chef (actually cooks the food)
+-   Spring Data JPA -> The waiter (takes your order and handles
+    everything for you)
+
+You interact with the waiter (Spring Data JPA), who communicates with
+the chef (Hibernate) using the menu (JPA specification).
+
+Interview Answer (2-Minute Version)
+
+JPA (Java Persistence API) is a Java specification for Object Relational
+Mapping (ORM). It defines interfaces and annotations for mapping Java
+objects to database tables but does not provide an implementation.
+
+Hibernate is a popular ORM framework that implements the JPA
+specification. It performs the actual persistence operations such as
+generating SQL, managing sessions, caching, and handling
+object-relational mapping.
+
+Spring Data JPA is a Spring framework that sits on top of JPA. It does
+not implement JPA itself; instead, it uses a JPA provider like
+Hibernate. Its main purpose is to reduce boilerplate code by providing
+repository interfaces such as JpaRepository, automatic query generation,
+and seamless integration with Spring’s transaction management.
