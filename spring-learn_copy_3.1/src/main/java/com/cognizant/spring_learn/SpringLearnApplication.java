@@ -32,6 +32,5 @@ public class SpringLearnApplication {
         SpringApplication.run(SpringLearnApplication.class, args);
 
         // Execute your Spring Core XML example
-        displayCountry();
     }
 }
